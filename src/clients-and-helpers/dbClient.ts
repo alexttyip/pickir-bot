@@ -4,7 +4,7 @@ import {
   PartitionKeyKind,
 } from "@azure/cosmos";
 import { ConversationStore } from "@slack/bolt";
-import { ConversationState, DbConversationState, DbTeam } from "../types";
+import { ConversationState, DbConversationState, DbTeam, PickingAlgorithm } from "../types";
 import { uniq } from "lodash";
 
 const endpoint = process.env.DB_ENDPOINT;
@@ -16,7 +16,7 @@ const partitionKey = { kind: PartitionKeyKind.Hash, paths: ["/id"] };
 
 const mapConversationStateToDbConversationState = (
   conversationId: string,
-  { excluded, teams, history }: ConversationState,
+  { excluded, teams, history, pickingAlgorithm, weights }: ConversationState,
 ): DbConversationState => ({
   id: conversationId,
   excluded: uniq(excluded),
@@ -31,16 +31,28 @@ const mapConversationStateToDbConversationState = (
     {},
   ),
   history,
+  pickingAlgorithm,
+  weights: Object.entries(weights).reduce(
+    (acc: Record<string, number>, [userId, weight]) => ({
+      ...acc,
+      [userId]: weight,
+    }),
+    {},
+  ),
 });
 
 const mapDbConversationStateToConversationState = ({
   excluded,
   teams,
+  pickingAlgorithm,
+  weights,
   history = [],
 }: DbConversationState): ConversationState => ({
   excluded,
   teams,
   history,
+  pickingAlgorithm,
+  weights,
 });
 
 class CosmosDbConvoStore implements ConversationStore<ConversationState> {
@@ -107,6 +119,8 @@ class CosmosDbConvoStore implements ConversationStore<ConversationState> {
         excluded: [],
         teams: {},
         history: [],
+        pickingAlgorithm: PickingAlgorithm.atmosphericNoise,
+        weights: {},
       };
     }
 

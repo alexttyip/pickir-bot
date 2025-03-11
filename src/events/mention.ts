@@ -9,6 +9,8 @@ import {
 } from "../clients-and-helpers/errorHandler";
 import { createTeam, showTeam } from "./teams";
 import { showStats } from "./stats";
+import { editWeights, showWeights } from "./weights";
+import { editPickingAlgorithm, showPickingAlgorithm } from "./algortithm";
 
 interface MentionParams {
   event: {
@@ -63,6 +65,22 @@ const handleMention = async ({
       break;
     case "stats":
       await showStats(user, channel, mentionTs, client);
+      break;
+    case "show-picking-algorithm":
+      case "spa":
+        await showPickingAlgorithm(say, context, mentionTs);
+        break;
+    case "edit-picking-algorithm":
+    case "epa":
+      await editPickingAlgorithm(say, rest, context, mentionTs);
+      break;
+    case "show-weights":
+      case "sw":
+        await showWeights(say, context, mentionTs);
+        break;
+    case "edit-weights":
+    case "ew":
+      await editWeights(say, rest, context, mentionTs);
       break;
     // case "delete":
     //   throw "TODO delete list";
