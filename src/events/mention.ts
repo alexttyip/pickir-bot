@@ -66,7 +66,7 @@ const handleMention = async ({
       await showStats(user, channel, mentionTs, client);
       break;
     case "snooze":
-      await snooze(channel, rest, context, mentionTs, client);
+      await snooze(say, channel, rest, context, mentionTs, client);
       break;
     // case "delete":
     //   throw "TODO delete list";
