@@ -16,10 +16,11 @@ const partitionKey = { kind: PartitionKeyKind.Hash, paths: ["/id"] };
 
 const mapConversationStateToDbConversationState = (
   conversationId: string,
-  { excluded, teams, history }: ConversationState,
+  { excluded, snoozed, teams, history }: ConversationState,
 ): DbConversationState => ({
   id: conversationId,
   excluded: uniq(excluded),
+  snoozed,
   teams: Object.entries(teams).reduce(
     (acc: Record<string, DbTeam>, [teamId, { displayName, members }]) => ({
       ...acc,
@@ -35,10 +36,12 @@ const mapConversationStateToDbConversationState = (
 
 const mapDbConversationStateToConversationState = ({
   excluded,
+  snoozed = [],
   teams,
   history = [],
 }: DbConversationState): ConversationState => ({
   excluded,
+  snoozed,
   teams,
   history,
 });
@@ -105,6 +108,7 @@ class CosmosDbConvoStore implements ConversationStore<ConversationState> {
     if (!result) {
       return {
         excluded: [],
+        snoozed: [],
         teams: {},
         history: [],
       };

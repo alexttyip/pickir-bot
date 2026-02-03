@@ -18,8 +18,14 @@ export interface DbTeam {
   members: string[];
 }
 
+export interface SnoozeEntry {
+  userId: string;
+  expiryTimestamp: number;
+}
+
 export interface ConversationState {
   excluded: string[];
+  snoozed: SnoozeEntry[];
   teams: Record<string, Team>;
   history: PickInstance[];
 }
@@ -27,6 +33,7 @@ export interface ConversationState {
 export interface DbConversationState {
   id: string;
   excluded: string[];
+  snoozed?: SnoozeEntry[];
   teams: Record<string, DbTeam>;
   history?: PickInstance[];
 }
