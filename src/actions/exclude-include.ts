@@ -6,6 +6,7 @@ import {
   getSimpleTextBlock,
   sayInThread,
 } from "../clients-and-helpers/sayHelpers";
+import { addReact } from "../clients-and-helpers/reactHelper";
 
 export const exclude = async (
   channel: string,
@@ -20,11 +21,7 @@ export const exclude = async (
 
   await context.updateConversation(conversation);
 
-  await client.reactions.add({
-    channel,
-    timestamp: mentionTs,
-    name: "ok_hand",
-  });
+  await addReact(client, channel, mentionTs, "ok_hand");
 };
 
 export const include = async (
@@ -43,11 +40,7 @@ export const include = async (
 
   await context.updateConversation(conversation);
 
-  await client.reactions.add({
-    channel,
-    timestamp: mentionTs,
-    name: "ok_hand",
-  });
+  await addReact(client, channel, mentionTs, "ok_hand");
 };
 
 export const listExcluded = async (

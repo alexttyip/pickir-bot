@@ -11,11 +11,13 @@ export interface PickInstance {
 export interface Team {
   displayName: string;
   members: string[];
+  memberEmojis?: Record<string, string>;
 }
 
 export interface DbTeam {
   displayName: string;
   members: string[];
+  memberEmojis?: Record<string, string>;
 }
 
 export interface ConversationState {

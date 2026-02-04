@@ -1,6 +1,8 @@
 import { SayFn } from "@slack/bolt";
 import { Block, KnownBlock } from "@slack/types";
 import { ContextWithConversation } from "../types";
+import { WebClient } from "@slack/web-api";
+import { addReact } from "./reactHelper";
 
 export interface PickButtonPayload {
   triggerTs: string;
@@ -39,6 +41,8 @@ export const replyWithChosenUser = async (
   triggerTs: string,
   excludedInPick: string[],
   teamId: string | undefined,
+  client: WebClient,
+  channel: string,
 ) => {
   const payload: PickButtonPayload = {
     triggerTs,
@@ -66,6 +70,15 @@ export const replyWithChosenUser = async (
       ],
     },
   ]);
+
+  if (teamId) {
+    const team = conversation.teams[teamId];
+    const emoji = team?.memberEmojis?.[pickedUser];
+
+    if (emoji) {
+      await addReact(client, channel, triggerTs, emoji);
+    }
+  }
 
   return updateConversation({
     ...conversation,

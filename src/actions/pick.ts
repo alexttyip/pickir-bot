@@ -83,6 +83,8 @@ export const getUsersAndPick = async (
       triggeringTs,
       excludedInPick,
       teamId,
+      client,
+      channel,
     );
   } catch (error) {
     if (error instanceof NoEligibleUsersError) {
