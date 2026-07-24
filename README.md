@@ -7,6 +7,7 @@
 | `pick <message>`         | Pick a non-excluded user from the channel.<br>Pickir will never pick the picker.             | `@Pickir pick TFGM-123: This is a test` |
 | `[exclude \| rm] @User`  | Exclude the user from **all** picks.<br>Note that by default all users are included.         | `@Pickir exclude @Alex Yip`             |
 | `[include \| i] @User`   | Re-include the user from picks.                                                              | `@Pickir include @Alex Yip`             |
+| `snooze @User <time>`    | Snooze a user from picks for a specified time. Supports: hours, days, weeks, or "today". | `@Pickir snooze @Alex Yip 5 hours`      |
 | `[list-excluded \| lse]` | List and manage excluded users.                                                              | `@Pickir lse`                           |
 | `create <team name>`     | Create team with the given team name and manage members.<br>Team names are case-insensitive. | `@Pickir create a-team`                 |
 | `show <team name>`       | Show team and manage members.                                                                | `@Pickir show a-team`                   |
@@ -37,5 +38,4 @@ Re-rolling will exclude previously-picked users, until there are no more users t
 
 - Avoid picking recently picked users
 - Improved stats
-- Exclude until date
 - Delete team

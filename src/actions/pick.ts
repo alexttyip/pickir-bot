@@ -12,6 +12,7 @@ import {
 } from "../clients-and-helpers/sayHelpers";
 import { ContextWithConversation } from "../types";
 import { throwUnexpectedError } from "../clients-and-helpers/errorHandler";
+import { refreshSnoozedUsers } from "../events/refreshSnoozedUsers";
 
 class NoEligibleUsersError extends Error {}
 
@@ -19,9 +20,13 @@ const pickUser = async (
   userIds: string[],
   triggeringUser: string | undefined,
   excluded: string[],
+  snoozedUserIds: string[],
 ): Promise<string> => {
   const eligibleUsers = userIds.filter(
-    (userId) => userId !== triggeringUser && !excluded.includes(userId),
+    (userId) =>
+      userId !== triggeringUser &&
+      !excluded.includes(userId) &&
+      !snoozedUserIds.includes(userId),
   );
 
   if (eligibleUsers.length === 0) {
@@ -51,6 +56,9 @@ export const getUsersAndPick = async (
   const {
     conversation: { excluded, teams },
   } = context;
+
+  const snoozedUserIds = await refreshSnoozedUsers(context);
+
   let userIds: string[] = [];
 
   if (!teamId) {
@@ -73,6 +81,7 @@ export const getUsersAndPick = async (
       userIds,
       triggeringUser,
       allExcludedMembers,
+      snoozedUserIds,
     );
 
     return replyWithChosenUser(
