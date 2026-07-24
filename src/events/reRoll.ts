@@ -9,6 +9,7 @@ import { getUsersAndPick } from "../actions/pick";
 import { throwUnexpectedError } from "../clients-and-helpers/errorHandler";
 import { SectionBlock } from "@slack/types/dist/block-kit/blocks";
 import { Block } from "@slack/types";
+import { addReact, removeReact } from "../clients-and-helpers/reactHelper";
 
 const isSectionBlock = (block: unknown): block is SectionBlock =>
   block !== undefined && (block as Block).type === "section";
@@ -46,6 +47,16 @@ export const reRoll: Middleware<
 
   const excludedUsersAndPickedUser = [...excludedInPick, pickedUser];
 
+  // Remove old user's emoji reaction if they had one
+  if (teamId) {
+    const team = context.conversation.teams[teamId];
+    const oldEmoji = team?.memberEmojis?.[pickedUser];
+
+    if (oldEmoji) {
+      await removeReact(client, channel, triggerTs, oldEmoji);
+    }
+  }
+
   // Hide re-roll button
   if (Array.isArray(blocks) && isSectionBlock(blocks[0])) {
     await client.chat.update({
@@ -60,12 +71,7 @@ export const reRoll: Middleware<
     });
   }
 
-  // React to the old pick message with no-cross
-  await client.reactions.add({
-    channel,
-    timestamp: pickMessageTs,
-    name: "no-cross",
-  });
+  await addReact(client, channel, pickMessageTs, "no-cross");
 
   await getUsersAndPick(
     say,
