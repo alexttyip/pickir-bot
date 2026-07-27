@@ -1,4 +1,4 @@
-import { getRandomInteger } from "../clients-and-helpers/randomNumberClient";
+import { getAtmosphericNoiseRandomInteger, getRandomInteger, getWeightedRandomInteger } from "../clients-and-helpers/randomNumberClient";
 import { SayFn } from "@slack/bolt";
 import { WebClient } from "@slack/web-api";
 import {
@@ -10,7 +10,7 @@ import {
   replyWithChosenUser,
   sayInThread,
 } from "../clients-and-helpers/sayHelpers";
-import { ContextWithConversation } from "../types";
+import { ContextWithConversation, PickingAlgorithm } from "../types";
 import { throwUnexpectedError } from "../clients-and-helpers/errorHandler";
 
 class NoEligibleUsersError extends Error {}
@@ -19,6 +19,8 @@ const pickUser = async (
   userIds: string[],
   triggeringUser: string | undefined,
   excluded: string[],
+  pickingAlgorithm: PickingAlgorithm,
+  weights: Record<string, number>,
 ): Promise<string> => {
   const eligibleUsers = userIds.filter(
     (userId) => userId !== triggeringUser && !excluded.includes(userId),
@@ -33,9 +35,20 @@ const pickUser = async (
     return eligibleUsers[0]!;
   }
 
-  const randomNumber = await getRandomInteger(0, eligibleUsers.length - 1);
+  let randomInteger;
+  switch (pickingAlgorithm) {
+    case PickingAlgorithm.mathRandom:
+      randomInteger = getRandomInteger(eligibleUsers.length);
+      break;
+    case PickingAlgorithm.weightedRandom:
+      randomInteger = getWeightedRandomInteger(eligibleUsers.map(user => weights[user] ?? 1));
+      break;
+    default:
+      randomInteger = await getAtmosphericNoiseRandomInteger(0, eligibleUsers.length - 1);
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return eligibleUsers[randomNumber]!;
+  return eligibleUsers[randomInteger]!;
 };
 
 export const getUsersAndPick = async (
@@ -49,7 +62,7 @@ export const getUsersAndPick = async (
   teamId?: string,
 ) => {
   const {
-    conversation: { excluded, teams },
+    conversation: { excluded, teams, pickingAlgorithm, weights },
   } = context;
   let userIds: string[] = [];
 
@@ -73,6 +86,8 @@ export const getUsersAndPick = async (
       userIds,
       triggeringUser,
       allExcludedMembers,
+      pickingAlgorithm,
+      weights,
     );
 
     return replyWithChosenUser(

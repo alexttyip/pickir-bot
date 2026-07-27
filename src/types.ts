@@ -18,10 +18,18 @@ export interface DbTeam {
   members: string[];
 }
 
+export enum PickingAlgorithm {
+  atmosphericNoise,
+  mathRandom,
+  weightedRandom,
+}
+
 export interface ConversationState {
   excluded: string[];
   teams: Record<string, Team>;
   history: PickInstance[];
+  pickingAlgorithm: PickingAlgorithm;
+  weights: Record<string, number>;
 }
 
 export interface DbConversationState {
@@ -29,6 +37,8 @@ export interface DbConversationState {
   excluded: string[];
   teams: Record<string, DbTeam>;
   history?: PickInstance[];
+  pickingAlgorithm: PickingAlgorithm;
+  weights: Record<string, number>;
 }
 
 export type ContextWithConversation = Context &
