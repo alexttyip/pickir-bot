@@ -23,13 +23,14 @@ const mapConversationStateToDbConversationState = (
   teams: Object.entries(teams).reduce(
     (
       acc: Record<string, DbTeam>,
-      [teamId, { displayName, members, memberEmojis }],
+      [teamId, { displayName, members, memberEmojis, memberWorkingDays }],
     ) => ({
       ...acc,
       [teamId]: {
         displayName,
         members: uniq(members),
         memberEmojis,
+        memberWorkingDays,
       },
     }),
     {},

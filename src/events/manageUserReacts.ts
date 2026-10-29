@@ -9,8 +9,8 @@ import { throwUnexpectedError } from "../clients-and-helpers/errorHandler";
 import { ManageUsersButtonPayload } from "./teams";
 import { ViewSubmitAction } from "@slack/bolt/dist/types/view";
 import store from "../clients-and-helpers/dbClient";
-import { WebClient } from "@slack/web-api";
 import { InputBlock } from "@slack/types";
+import { getUserName } from "../clients-and-helpers/userHelpers";
 
 const MANAGE_USER_REACTS_BLOCK_ID_PREFIX = "MANAGE_USER_REACTS_BLOCK_ID_";
 const MANAGE_USER_REACTS_ACTION_ID_PREFIX = "MANAGE_USER_REACTS_ACTION_ID_";
@@ -19,18 +19,6 @@ interface ManageUserReactsModalSubmissionPayload {
   teamId: string;
   conversationId: string;
 }
-
-const getUserName = async (
-  client: WebClient,
-  userId: string,
-): Promise<string> => {
-  try {
-    const result = await client.users.info({ user: userId });
-    return result.user?.name ?? userId;
-  } catch {
-    return userId;
-  }
-};
 
 export const manageUserReacts: Middleware<
   SlackActionMiddlewareArgs<BlockAction>

@@ -12,6 +12,7 @@ import {
 } from "../clients-and-helpers/sayHelpers";
 import { ContextWithConversation } from "../types";
 import { throwUnexpectedError } from "../clients-and-helpers/errorHandler";
+import { isUserWorkingToday } from "../clients-and-helpers/workingDays";
 
 class NoEligibleUsersError extends Error {}
 
@@ -19,9 +20,13 @@ const pickUser = async (
   userIds: string[],
   triggeringUser: string | undefined,
   excluded: string[],
+  memberWorkingDays?: Record<string, number[]>,
 ): Promise<string> => {
   const eligibleUsers = userIds.filter(
-    (userId) => userId !== triggeringUser && !excluded.includes(userId),
+    (userId) =>
+      userId !== triggeringUser &&
+      !excluded.includes(userId) &&
+      isUserWorkingToday(memberWorkingDays, userId),
   );
 
   if (eligibleUsers.length === 0) {
@@ -52,6 +57,7 @@ export const getUsersAndPick = async (
     conversation: { excluded, teams },
   } = context;
   let userIds: string[] = [];
+  let memberWorkingDays: Record<string, number[]> | undefined;
 
   if (!teamId) {
     userIds = await getAllUserIdsInChannel(channel, client);
@@ -64,6 +70,7 @@ export const getUsersAndPick = async (
     }
 
     userIds = [...team.members];
+    memberWorkingDays = team.memberWorkingDays;
   }
 
   const allExcludedMembers = [...excludedInPick, ...excluded];
@@ -73,6 +80,7 @@ export const getUsersAndPick = async (
       userIds,
       triggeringUser,
       allExcludedMembers,
+      memberWorkingDays,
     );
 
     return replyWithChosenUser(
