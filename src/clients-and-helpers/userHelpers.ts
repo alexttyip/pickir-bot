@@ -53,3 +53,15 @@ export const getUserNamesByIds = (
     (users) =>
       users.map(({ user }) => user?.profile?.display_name).filter(isString),
   );
+
+export const getUserName = async (
+  client: WebClient,
+  userId: string,
+): Promise<string> => {
+  try {
+    const result = await client.users.info({ user: userId });
+    return result.user?.name ?? userId;
+  } catch {
+    return userId;
+  }
+};

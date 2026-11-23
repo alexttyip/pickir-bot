@@ -11,11 +11,15 @@ export interface PickInstance {
 export interface Team {
   displayName: string;
   members: string[];
+  memberEmojis?: Record<string, string>;
+  memberWorkingDays?: Record<string, number[]>;
 }
 
 export interface DbTeam {
   displayName: string;
   members: string[];
+  memberEmojis?: Record<string, string>;
+  memberWorkingDays?: Record<string, number[]>;
 }
 
 export interface ConversationState {

@@ -21,6 +21,14 @@ Note that one must currently call the exclude tag after the team tag, if both ar
 | `--team <team name>`, (`-t`)              | Only pick from specific team |
 | `--exclude @Ned Reid @Sned Sreid`, (`-e`) | Exclude users                |
 
+## Working weeks
+
+Each team member can be given a working week via the "Manage working days" button under a team message.
+When picking from a team, members are only picked on their selected days.
+Leaving a member's days empty means they can be picked on any day.
+
+Note that working weeks only apply to team picks (via the `--team` flag), not channel-wide picks.
+
 ## Error handling
 
 | Pickir's reaction  | Description      |

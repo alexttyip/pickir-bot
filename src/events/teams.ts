@@ -24,10 +24,28 @@ const getManageUsersButton = (teamId: string): KnownBlock => {
         type: "button",
         text: {
           type: "plain_text",
-          text: "Manage users ",
+          text: "Manage users",
         },
         value: JSON.stringify(payload),
         action_id: "manage_users_button_click",
+      },
+      {
+        type: "button",
+        text: {
+          type: "plain_text",
+          text: "Manage user reacts",
+        },
+        value: JSON.stringify(payload),
+        action_id: "manage_user_reacts_button_click",
+      },
+      {
+        type: "button",
+        text: {
+          type: "plain_text",
+          text: "Manage working days",
+        },
+        value: JSON.stringify(payload),
+        action_id: "manage_working_days_button_click",
       },
     ],
   };

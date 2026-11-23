@@ -8,6 +8,14 @@ import {
   manageUsersModalSubmission,
 } from "./src/events/manageUsersInTeam";
 import {
+  manageUserReacts,
+  manageUserReactsModalSubmission,
+} from "./src/events/manageUserReacts";
+import {
+  manageWorkingDays,
+  manageWorkingDaysModalSubmission,
+} from "./src/events/manageWorkingDays";
+import {
   showUserPickedCountStats,
   showUserTriggerCountStats,
 } from "./src/events/stats";
@@ -23,6 +31,8 @@ const app = new App({
 app.event("app_mention", mentionEvent);
 app.action("re_roll_button_click", reRoll);
 app.action("manage_users_button_click", manageUsersInTeam);
+app.action("manage_user_reacts_button_click", manageUserReacts);
+app.action("manage_working_days_button_click", manageWorkingDays);
 
 app.action("stats_user_trigger_count_btn_click", showUserTriggerCountStats);
 app.action("stats_user_picked_count_btn_click", showUserPickedCountStats);
@@ -32,6 +42,14 @@ app.action(
 ); // TODO
 
 app.view("manage_users_modal_submission", manageUsersModalSubmission);
+app.view(
+  "manage_user_reacts_modal_submission",
+  manageUserReactsModalSubmission,
+);
+app.view(
+  "manage_working_days_modal_submission",
+  manageWorkingDaysModalSubmission,
+);
 
 void app.start().then(() => {
   console.log("⚡️ Bolt app is running!");
