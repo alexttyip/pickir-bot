@@ -33,7 +33,9 @@ const handleMention = async ({
 
   const { text: message, channel, ts: mentionTs, user } = event;
 
-  const [prefix, cmd, ...rest] = message.split(/\s+/);
+  const [prefix, cmd, ...rest] = message
+    .replace(/^Reminder:\s+/i, "")
+    .split(/\s+/);
 
   if (prefix !== `<@${botUserId}>` || !cmd) {
     return throwUserError(client, channel, mentionTs);
