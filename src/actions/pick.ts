@@ -135,6 +135,8 @@ export const pick = async (
             excludeTagIdx !== -1 ? excludeTagIdx : undefined,
           )
           .join(" ")
+          .replace(/\.+$/, "")
+          .trim()
       : undefined;
 
   const excludedInPick =
