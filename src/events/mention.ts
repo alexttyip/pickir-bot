@@ -37,7 +37,11 @@ const handleMention = async ({
     .replace(/^Reminder:\s+/i, "")
     .split(/\s+/);
 
-  if (prefix !== `<@${botUserId}>` || !cmd) {
+  const isBotMention =
+    prefix !== undefined &&
+    (prefix === `<@${botUserId}>` || prefix.startsWith(`<@${botUserId}|`));
+
+  if (!isBotMention || !cmd) {
     return throwUserError(client, channel, mentionTs);
   }
 
